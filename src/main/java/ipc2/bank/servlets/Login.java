@@ -1,12 +1,12 @@
-
 package ipc2.bank.servlets;
 
+import ipc2.bank.conexion.Conexion;
+import ipc2.bank.database.UserDB;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-
 
 /**
  *
@@ -26,7 +26,11 @@ public class Login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        Conexion conexion = new Conexion();
+        conexion.desconectar(request);
+        RequestDispatcher dispatcher = getServletContext()
+                .getRequestDispatcher("/index.jsp");
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -40,7 +44,17 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        UserDB userDB = new UserDB(new Conexion().obtenerConexion());
+        if (userDB.autenticar(request)) {
+            RequestDispatcher dispatcher = getServletContext()
+                    .getRequestDispatcher(userDB.getRedirectDashboard(request));
+            dispatcher.forward(request, response);
+        } else {
+            request.setAttribute("error", "Credenciales incorrectas");
+            RequestDispatcher dispatcher = getServletContext()
+                    .getRequestDispatcher("/login.jsp");
+            dispatcher.forward(request, response);
+        }
     }
 
     /**

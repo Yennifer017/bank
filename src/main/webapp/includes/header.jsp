@@ -34,7 +34,7 @@
             <!-- Left links -->
 
             <div class="d-flex align-items-center">
-                <a class="btn btn-primary me-3" href="${pageContext.request.contextPath}/login"> Cerrar Sesion</a>
+                <a class="btn btn-primary me-3" href="${pageContext.request.contextPath}/Login"> Cerrar Sesion</a>
             </div>
         </div>
         <!-- Collapsible wrapper -->

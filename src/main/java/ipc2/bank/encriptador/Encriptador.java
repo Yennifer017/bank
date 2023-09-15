@@ -10,6 +10,12 @@ import java.security.NoSuchAlgorithmException;
  * @author yenni
  */
 public class Encriptador {
+    //encriptar passwords desde aqui, prueba
+    /*public static void main(String[] args) {
+        Encriptador encriptador = new Encriptador();
+        String password = "12345678";
+        System.out.println(encriptador.encriptar(password));
+    }*/
     
     public String encriptar(String password) {
         try {

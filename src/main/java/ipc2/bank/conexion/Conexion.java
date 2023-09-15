@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class Conexion {
     private Connection conexion;
-    private final String URL = "jdbc:mysql://localhost:3306/Bank";
+    private final String URL = "jdbc:mysql://localhost:3306/WebBanco";
     private final String USER = "userforipc";
     private final String PASSWORD = "yennifer7890";
     
@@ -39,6 +39,19 @@ public class Conexion {
                 e.printStackTrace();
             }
         }
+    }
+    public void desconectar(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Connection connection = (Connection)session.getAttribute("conexion");
+        if (connection != null) {
+            try {
+                connection.close();
+                System.out.println("Conexión cerrada");
+            } catch (SQLException e) {
+                System.out.println("No se pudo cerrar la conexión");
+            }
+        }
+        session.invalidate();
     }
     public void closeSession(HttpServletRequest request){
         HttpSession session = request.getSession();
