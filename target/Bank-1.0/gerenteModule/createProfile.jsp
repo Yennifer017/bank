@@ -37,7 +37,7 @@
                         <div class="row d-flex justify-content-center">
                             <div class="col-lg-8">
                                 <h2 class="fw-bold mb-5">Creacion de usuario</h2>
-                                <form action="${url}" method="POST">
+                                <form action="${url}" method="POST" enctype='multipart/form-data'>
                                     <!-- 2 column grid layout with text inputs -->
                                     <!-- name Input -->
                                     <div class="row">
@@ -96,6 +96,12 @@
                                     <c:if test="${!empty(createError)}">
                                         <div class=" alert alert-danger alert-dismissible fade show" role="alert">
                                             <strong>Error al crear cliente - </strong> ${createError}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${!empty(exito)}">
+                                        <div class=" alert alert-success alert-dismissible fade show" role="alert">
+                                            <strong>Exito - </strong> ${exito}
                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>
                                     </c:if>

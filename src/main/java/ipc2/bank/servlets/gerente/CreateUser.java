@@ -13,6 +13,7 @@ import java.sql.Connection;
  * @author yenni
  */
 @WebServlet(name = "CreateUser", urlPatterns = {"/CreateUser"})
+@jakarta.servlet.annotation.MultipartConfig
 public class CreateUser extends HttpServlet {
 
     private utilForServlet util;
@@ -48,10 +49,13 @@ public class CreateUser extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.removeAttribute("createError");
+        request.removeAttribute("exito");
         ClienteDB clienteDB = new ClienteDB((Connection) request.getSession().getAttribute("conexion"));
         String error = clienteDB.InsertIntoDB(request);
-        if(!error.isEmpty()){
+        if(error != null){
             request.setAttribute("createError", error);
+        }else{
+            request.setAttribute("exito", "Se ha creado el usuario");
         }
         util.redirect(this, request, response, "/gerenteModule/createProfile.jsp");
     }

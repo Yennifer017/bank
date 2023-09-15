@@ -206,7 +206,8 @@ public class UserDB {
                 insert.setString(2, user.getAddress());
                 insert.setString(3, user.getNoIdentificacion());
                 insert.setString(4, user.getSexo());
-                insert.setString(5, user.getPassword());
+                String encryptedPassword = new Encriptador().encriptar(user.getPassword());
+                insert.setString(5, encryptedPassword);
                 insert.setInt(6, user.getTipoUsuario());
                 insert.executeUpdate();
                 return true;

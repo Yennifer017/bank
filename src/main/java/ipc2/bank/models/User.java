@@ -35,6 +35,7 @@ public class User {
      */
     public User(HttpServletRequest request, int tipoUsuario){
         try {
+            password = request.getParameter("passwordInput");
             noIdentificacion = request.getParameter("noIdentificacionInput");
             name = request.getParameter("nameInput");
             address = request.getParameter("addressInput");
@@ -60,7 +61,8 @@ public class User {
             return presentValue(name) && presentValue(address)
                 && presentValue(noIdentificacion) && presentValue(sexo)
                 && (sexo.equals("Femenino") || sexo.equals("Masculino"))
-                && (tipoUsuario >= 1 && tipoUsuario <= 3);
+                && (tipoUsuario >= 1 && tipoUsuario <= 3)
+                && password.length()>3;
         } catch (NullPointerException e) {
             return false;
         }

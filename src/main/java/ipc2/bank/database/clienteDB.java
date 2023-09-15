@@ -48,6 +48,7 @@ public class ClienteDB {
             }else{
                 error = "Algun dato de usuario esta incorrecto o su no de identificacion esta repetido.";
             }
+            connection.rollback();
             connection.setAutoCommit(true);
         } catch (SQLException ex) {
             Logger.getLogger(ClienteDB.class.getName()).log(Level.SEVERE, null, ex); 
