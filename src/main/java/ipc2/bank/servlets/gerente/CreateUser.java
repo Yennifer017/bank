@@ -1,13 +1,12 @@
 package ipc2.bank.servlets.gerente;
 
+import ipc2.bank.database.ClienteDB;
 import ipc2.bank.util.utilForServlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Blob;
+import java.sql.Connection;
 
 /**
  *
@@ -48,9 +47,13 @@ public class CreateUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        
-
+        request.removeAttribute("createError");
+        ClienteDB clienteDB = new ClienteDB((Connection) request.getSession().getAttribute("conexion"));
+        String error = clienteDB.InsertIntoDB(request);
+        if(!error.isEmpty()){
+            request.setAttribute("createError", error);
+        }
+        util.redirect(this, request, response, "/gerenteModule/createProfile.jsp");
     }
 
     /**

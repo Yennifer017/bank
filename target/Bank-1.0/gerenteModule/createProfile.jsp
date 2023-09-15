@@ -14,6 +14,7 @@
     </head>
     <body>
         <c:if test="${empty(error)}"> <!-- para que no muestre nada si no tiene permisos -->
+
             <!-- Section: Design Block -->
             <section class="text-center">
                 <!-- Background image -->
@@ -22,6 +23,9 @@
                      height: 100px;
                      "></div>
                 <!-- Background image -->
+
+
+
 
                 <div class="card mx-4 mx-md-5 shadow-5-strong" style="
                      margin-top: -100px;
@@ -34,31 +38,33 @@
                             <div class="col-lg-8">
                                 <h2 class="fw-bold mb-5">Creacion de usuario</h2>
                                 <form action="${url}" method="POST">
-                                    <!-- 2 column grid layout with text inputs for the first and last names -->
+                                    <!-- 2 column grid layout with text inputs -->
+                                    <!-- name Input -->
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
-                                                <input name="nameinput" id="nameinput" type="text" class="form-control" />
+                                                <input name="nameInput" id="nameinput" type="text" class="form-control" />
                                                 <label class="form-label" for="form3Example1">Nombre completo</label>
                                             </div>
                                         </div>
+                                        <!-- identifier Input -->
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
-                                                <input name="noIdentificacion" id="noIdentificacion" type="text" class="form-control" />
+                                                <input name="noIdentificacionInput" id="noIdentificacion" type="text" class="form-control" />
                                                 <label  class="form-label" for="form3Example2">No de identificacion personal (DPI o pasaporte)</label>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <!-- address Input -->
                                     <div class="form-outline mb-4">
                                         <div class="form-outline">
-                                            <input name="addressinput" id="addressinput" type="text" class="form-control" />
+                                            <input name="addressInput" id="addressinput" type="text" class="form-control" />
                                             <label class="form-label" for="form3Example1">Dirección de domicilio</label>
                                         </div>
                                     </div>
                                     <!-- Password input -->
                                     <div class="form-outline mb-4">
-                                        <input name="password" id="password" type="password" id="form3Example4" class="form-control" />
+                                        <input name="passwordInput" id="password" type="password" id="form3Example4" class="form-control" />
                                         <label  class="form-label" for="form3Example4">Contrasena</label>
                                     </div>
                                     <!-- sex input -->
@@ -75,7 +81,7 @@
 
                                     <!-- pdf upload -->
                                     <div class="form-outline">
-                                        <input name="archivo" accept=".pdf" 
+                                        <input name="fileInput" accept=".pdf" 
                                                type="file" class="form-control" 
                                                id="archivo" 
                                                aria-describedby="inputGroupFileAddon04" 
@@ -87,6 +93,12 @@
                                     <button type="submit" class="btn btn-primary btn-block mb-4">
                                         Aceptar
                                     </button>
+                                    <c:if test="${!empty(createError)}">
+                                        <div class=" alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong>Error al crear cliente - </strong> ${createError}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    </c:if>
                                 </form>
                             </div>
                         </div>

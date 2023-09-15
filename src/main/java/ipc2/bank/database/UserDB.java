@@ -78,6 +78,28 @@ public class UserDB {
         }
         return Optional.ofNullable(user);
     }
+    /**
+     * Consulta la base de datos para verificar si ya existen ciertas credenciales
+     * 
+     * @param credentials para verificar coincidencias
+     * @return true si existe, false de lo contrario
+     */
+    public boolean preExist(String credentials){
+        String query = "SELECT * FROM usuario WHERE noIdentificacion = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, credentials);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (SQLException e) {
+            System.out.println("Error al consultar: " + e);
+            return false;
+        }
+    }
 
     /**
      * Obtiene todos los datos de un usuario a partir de un resultado de una consulta mysql
@@ -147,7 +169,15 @@ public class UserDB {
         }
     }
 
-    public boolean validateScedule(HttpSession session) throws NoAtributeFoundException {
+    /**
+     * Valida los horarios de un usuario
+     * @param session de la sesion va obtener el atributo user, que servira para evaluar su tipo
+     * @return true si el horario permite acceder, false de lo contrario
+     * @throws ipc2.bank.exceptions.NoAtributeFoundException si el empleasdo no cuenta con un horario, 
+     *   es un error de la base de datos
+     */
+    public boolean validateScedule(HttpSession session) 
+            throws NoAtributeFoundException, NullPointerException {
         User currentUser = (User) session.getAttribute("user");
         if (currentUser.getTipoUsuario() == 2 || currentUser.getTipoUsuario() == 3) {
             EmpleadoDB empleadoDB = new EmpleadoDB(connection);
@@ -167,25 +197,27 @@ public class UserDB {
      * @return boolean que indica si se inserto correctamente o no
      */
     public boolean InsertIntoDB(User user){
-        String query = "INSERT INTO usuario(nombre, direccion, noIdentificacion, sexo, password, tipoUsuario) "
-                + "VALUES (?, ?, ?, ?, ?, ?);";
-        try {
-            PreparedStatement insert = connection.prepareStatement(query);
-            insert.setString(1, user.getName());
-            insert.setString(2, user.getDireccion());
-            insert.setString(3, user.getNoIdentificacion());
-            insert.setString(4, user.getSexo());
-            insert.setString(5, user.getPassword());
-            insert.setInt(6, user.getTipoUsuario());
-            insert.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            System.out.println(e);
+        if(user.isValid() && !preExist(user.getNoIdentificacion())){
+            String query = "INSERT INTO usuario(nombre, direccion, noIdentificacion, sexo, password, tipoUsuario) "
+                    + "VALUES (?, ?, ?, ?, ?, ?);";
+            try {
+                PreparedStatement insert = connection.prepareStatement(query);
+                insert.setString(1, user.getName());
+                insert.setString(2, user.getAddress());
+                insert.setString(3, user.getNoIdentificacion());
+                insert.setString(4, user.getSexo());
+                insert.setString(5, user.getPassword());
+                insert.setInt(6, user.getTipoUsuario());
+                insert.executeUpdate();
+                return true;
+            } catch (Exception e) {
+                System.out.println(e);
+                return false;
+            }
+        }else{
             return false;
         }
     }
     
-    /*************************************************************
-     
-     *************************************************************/
+    
 }
