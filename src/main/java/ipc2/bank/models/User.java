@@ -1,7 +1,10 @@
 package ipc2.bank.models;
 
+import ipc2.bank.conexion.Conexion;
+import ipc2.bank.database.UserDB;
 import ipc2.bank.util.Funcionalidad;
 import jakarta.servlet.http.HttpServletRequest;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import lombok.Getter;
@@ -105,5 +108,6 @@ public class User {
     private boolean presentValue(String atribute) {
         return !(atribute.isBlank() && atribute.isEmpty());
     }
+    
 
 }

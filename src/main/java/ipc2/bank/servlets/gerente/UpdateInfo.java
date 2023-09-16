@@ -3,6 +3,7 @@ package ipc2.bank.servlets.gerente;
 
 import ipc2.bank.database.EmpleadoDB;
 import ipc2.bank.database.TurnoDB;
+import ipc2.bank.database.UserDB;
 import ipc2.bank.exceptions.NoConnectionFoundException;
 import ipc2.bank.models.User;
 import ipc2.bank.util.ServletUtil;
@@ -23,8 +24,6 @@ public class UpdateInfo extends HttpServlet {
         this.util = new ServletUtil();
     }
 
-
-    
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -37,6 +36,7 @@ public class UpdateInfo extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("title", "Edicion de perfil personal");
+        request.setAttribute("currentUser", request.getSession().getAttribute("user"));
         loadFilter(request);
         util.goToValidateSchedule(this, request, response, "/gerenteModule/updateInfo.jsp");
         
@@ -68,6 +68,11 @@ public class UpdateInfo extends HttpServlet {
             String error = empleadoDB.updateIntoDB(request, 3, currentUser.getId());
             if(error != null){
                 request.setAttribute("updateError", error);
+            }else{
+                currentUser = new UserDB(request.getSession()).obtener(currentUser.getId()).get();
+                request.getSession().setAttribute("user", currentUser);
+                request.setAttribute("currentUser", request.getSession().getAttribute("user"));
+                request.setAttribute("exito", "perfil actualizado");
             }
         } catch (NoConnectionFoundException ex) {
             request.setAttribute("error", "conexion no encontrada");
@@ -83,6 +88,6 @@ public class UpdateInfo extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

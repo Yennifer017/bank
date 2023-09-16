@@ -25,17 +25,21 @@
 
                             <!-- 2 column grid layout with text inputs -->
                             <!-- name Input -->
+                            <p class="mb-5">IMPORTANTE: es necesario volver a especificar la contraseña, si se deja en blanco no 
+                            se efectuara la actualizacion, o si se escribe un valor diferente, esta se actualizara con los
+                            otros campos</p>
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <div class="form-outline">
-                                        <input name="nameInput" id="nameinput" type="text" class="form-control" />
-                                        <label class="form-label" for="form3Example1">Nombre completo</label>
+                                        <input name="nameInput" id="nameinput" type="text" class="form-control" placeholder="${currentUser.name}"/>
+                                        <label class="form-label" for="form3Example1" >Nombre completo</label>
                                     </div>
                                 </div>
                                 <!-- identifier Input -->
                                 <div class="col-md-6 mb-4">
                                     <div class="form-outline">
-                                        <input name="noIdentificacionInput" id="noIdentificacion" type="text" class="form-control" />
+                                        <input name="noIdentificacionInput" id="noIdentificacion" 
+                                               type="text" class="form-control" placeholder="${currentUser.noIdentificacion}" />
                                         <label  class="form-label" for="form3Example2">No de identificacion personal (DPI o pasaporte)</label>
                                     </div>
                                 </div>
@@ -46,7 +50,8 @@
                                 <!=<!-- address input -->
                                 <div class="col-md-6 mb-4">
                                     <div class="form-outline">
-                                        <input name="addressInput" id="addressinput" type="text" class="form-control" />
+                                        <input name="addressInput" id="addressinput" type="text" 
+                                               class="form-control" placeholder="${currentUser.address}"/>
                                         <label class="form-label" for="form3Example1">Dirección de domicilio</label>
                                     </div>
                                 </div>
@@ -64,7 +69,7 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="form-outline">
                                         <select name="sexInput" class="p-2 mb-4 form-select" aria-label="Default select example">
-                                            <option selected>Sexo</option>
+                                            <option selected>Sexo: ${currentUser.sexo}</option>
                                             <option value="1">Masculino</option>
                                             <option value="2">Femenino</option>
                                         </select>
@@ -74,7 +79,7 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="form-outline">
                                         <select name="idTurn" class="form-select mb-4" aria-label="Default select example">
-                                            <option selected>Horario</option>
+                                            <option selected>${currentHorario}</option>
                                             <c:forEach items="${turns}" var="turn">
                                                 <!-- inicio de la busqueda de turnos disponibles -->
                                                 <option value="${turn.idType}">${turn.name}</option>

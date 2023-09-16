@@ -5,6 +5,7 @@ ipc2\bank\models\Turno.class
 ipc2\bank\exceptions\NoAtributeFoundException.class
 ipc2\bank\util\PdfUtil.class
 ipc2\bank\database\UserDB.class
+ipc2\bank\models\RegistroCambio.class
 ipc2\bank\models\User.class
 ipc2\bank\encriptador\Encriptador.class
 ipc2\bank\models\Empleado.class
@@ -16,3 +17,4 @@ ipc2\bank\util\Funcionalidad.class
 ipc2\bank\util\ServletUtil.class
 ipc2\bank\models\Cliente.class
 ipc2\bank\database\ClienteDB.class
+ipc2\bank\database\RegistroCambioDB.class

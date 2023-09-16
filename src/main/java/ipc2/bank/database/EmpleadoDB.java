@@ -1,7 +1,6 @@
 package ipc2.bank.database;
 
 import ipc2.bank.exceptions.NoConnectionFoundException;
-import ipc2.bank.models.Cliente;
 import ipc2.bank.models.Empleado;
 import ipc2.bank.models.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,9 +31,8 @@ public class EmpleadoDB {
 
     public String updateIntoDB(HttpServletRequest request, int typeUser, int idUser) {
         String error = null;
-        
         try {
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); //empieza una transaccion
             UserDB userDB = new UserDB(connection);
             User user = new User(request, typeUser); //crear el user con los datos del forms
             user.setId(idUser);
@@ -47,7 +45,13 @@ public class EmpleadoDB {
                         empleado.setIdTurn(turnoDB.getTurno(idUser).get().getIdType());
                     }
                     this.updateIntoDB(empleado);
-                    connection.commit();
+                    RegistroCambioDB regDB = new RegistroCambioDB(connection);
+                    User currentGerente = (User) request.getSession().getAttribute("user");
+                    if(regDB.guardarRegistro(currentGerente.getId(), idUser)){
+                        connection.commit();
+                    }else{
+                        error = "El registro no se guardo correctamente, no se pudo actualizar";
+                    }
                 } else {
                     error = "Algun campo no contiene informacion valida, no se pudo actualizar";
                 }

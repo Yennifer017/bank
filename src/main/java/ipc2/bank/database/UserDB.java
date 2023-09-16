@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -23,7 +25,7 @@ public class UserDB {
 
     private Connection connection;
     private Encriptador encriptador;
-
+    public static final int CLIENTE = 1, CAJERO = 2, GERENTE = 3;
     public UserDB(Connection connection) {
         this.connection = connection;
         this.encriptador = new Encriptador();
@@ -35,6 +37,23 @@ public class UserDB {
         if (this.connection == null) {
             throw new NoConnectionFoundException();
         }
+    }
+    
+    public List<User> getAll(int typeUser){
+        String query = "SELECT * FROM usuario WHERE tipoUsuario = ?";
+        try {
+            PreparedStatement select = connection.prepareStatement(query);
+
+            List<User> users = new ArrayList<>();
+            ResultSet rs = select.executeQuery();
+            while (rs.next()) {
+                users.add(new User(rs));
+            }
+            return users;
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+        return null;
     }
 
     /**
@@ -183,7 +202,7 @@ public class UserDB {
                 Funcionalidad[] funC = {
                     new Funcionalidad("Verificar estado de cuenta", ""),
                     new Funcionalidad("Transferir dinero entre cuentas asociadas", ""),
-                    new Funcionalidad("Transferencia a tercerso", ""),
+                    new Funcionalidad("Transferencia a terceros", ""),
                     new Funcionalidad("Visualizar reportes", "")
                 };
                 return funC;
@@ -197,7 +216,7 @@ public class UserDB {
                 Funcionalidad[] funG = {
                     new Funcionalidad("Crear cuenta bancaria", "CreateUser"),
                     new Funcionalidad("Ver y actualizar perfil", "UpdateInfo"),
-                    new Funcionalidad("Actualizar datos de cajeros", ""),
+                    new Funcionalidad("Actualizar datos de cajeros", "DisplayCajeros"),
                     new Funcionalidad("Actualizar datos de clientes", ""),
                     new Funcionalidad("Actualizar Parametros del sistema", ""),
                     new Funcionalidad("Visualizar reportes", "")
@@ -274,7 +293,7 @@ public class UserDB {
             update.setString(2, updateUser.getAddress());
             update.setString(3, updateUser.getNoIdentificacion());
             update.setString(4, updateUser.getSexo());
-            String encryptedPassword = updateUser.getPassword();
+            String encryptedPassword = new Encriptador().encriptar(updateUser.getPassword());
             update.setString(5, encryptedPassword);
             update.setInt(6, updateUser.getId());
             update.executeUpdate();
