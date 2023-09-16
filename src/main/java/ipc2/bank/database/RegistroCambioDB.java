@@ -1,13 +1,10 @@
 package ipc2.bank.database;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Time;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
+import ipc2.bank.models.RegistroCambio;
+import java.util.List;
 
 /**
  *
@@ -39,5 +36,21 @@ public class RegistroCambioDB {
             System.out.println(e);
             return false;
         }
+    }
+    public List<RegistroCambio> getReport(int typeUser){
+        String query = "SELECT cambioRealizado.codUsuarioModificado, fecha, hora, nombre, "
+                + "direccion, noIdentificacion FROM cambioRealizado "
+                + "JOIN usuario "
+                + "ON cambioRealizado.codUsuarioModificado = usuario.codigo "
+                + "WHERE usuario.tipoUsuario = 3";
+        return null;
+    }
+    public List<RegistroCambio> getReportByID(int idUser){
+        String query = "SELECT cambioRealizado.codUsuarioModificado, fecha, hora, nombre, direccion, "
+                + "noIdentificacion FROM cambioRealizado "
+                + "JOIN usuario "
+                + "ON cambioRealizado.codUsuarioModificado = usuario.codigo "
+                + "WHERE cambioRealizado.codUsuarioModificado = 2";
+        return null;
     }
 }

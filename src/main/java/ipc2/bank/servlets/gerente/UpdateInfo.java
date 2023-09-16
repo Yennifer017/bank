@@ -37,18 +37,11 @@ public class UpdateInfo extends HttpServlet {
             throws ServletException, IOException {
         request.setAttribute("title", "Edicion de perfil personal");
         request.setAttribute("currentUser", request.getSession().getAttribute("user"));
-        loadFilter(request);
+        util.loadFilterTurns(request);
         util.goToValidateSchedule(this, request, response, "/gerenteModule/updateInfo.jsp");
         
     }
 
-    private void loadFilter(HttpServletRequest request){
-        try {
-            request.setAttribute("turns", new TurnoDB(request.getSession()).getAll());
-        } catch (NoConnectionFoundException ex) {
-            System.out.println(ex);
-        }
-    }
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -62,10 +55,10 @@ public class UpdateInfo extends HttpServlet {
             throws ServletException, IOException {
         request.setAttribute("title", "Edicion de perfil personal");
         User currentUser = (User) request.getSession().getAttribute("user");
-        loadFilter(request);
+        util.loadFilterTurns(request);
         try {
             EmpleadoDB empleadoDB = new EmpleadoDB(request.getSession());
-            String error = empleadoDB.updateIntoDB(request, 3, currentUser.getId());
+            String error = empleadoDB.updateIntoDB(request, UserDB.GERENTE, currentUser.getId());
             if(error != null){
                 request.setAttribute("updateError", error);
             }else{

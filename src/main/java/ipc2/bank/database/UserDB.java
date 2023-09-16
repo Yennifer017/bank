@@ -26,6 +26,8 @@ public class UserDB {
     private Connection connection;
     private Encriptador encriptador;
     public static final int CLIENTE = 1, CAJERO = 2, GERENTE = 3;
+    public static final String CREDENTIALS_BANCA_VIRTUAL = "101";
+    public static final int ID_BANCA_VIRTUAL = 101;
     public UserDB(Connection connection) {
         this.connection = connection;
         this.encriptador = new Encriptador();
@@ -45,9 +47,12 @@ public class UserDB {
             PreparedStatement select = connection.prepareStatement(query);
 
             List<User> users = new ArrayList<>();
+            select.setInt(1, typeUser);
             ResultSet rs = select.executeQuery();
             while (rs.next()) {
-                users.add(new User(rs));
+                if(rs.getInt("codigo")!= ID_BANCA_VIRTUAL){
+                    users.add(new User(rs));
+                }
             }
             return users;
         } catch (SQLException ex) {
@@ -80,19 +85,21 @@ public class UserDB {
      */
     public Optional<User> obtener(String credentials, String password) {
         User user = null;
-        String query = "SELECT * FROM usuario WHERE noIdentificacion = ? AND password = ?";
-        String encryptedPassword = encriptador.encriptar(password);
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.setString(1, credentials);
-            ps.setString(2, encryptedPassword);
-            try (ResultSet resultSet = ps.executeQuery()) {
-                if (resultSet.next()) {
-                    user = new User(resultSet);
+        if(!credentials.equals(CREDENTIALS_BANCA_VIRTUAL)){
+            String query = "SELECT * FROM usuario WHERE noIdentificacion = ? AND password = ?";
+            String encryptedPassword = encriptador.encriptar(password);
+            try {
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setString(1, credentials);
+                ps.setString(2, encryptedPassword);
+                try (ResultSet resultSet = ps.executeQuery()) {
+                    if (resultSet.next()) {
+                        user = new User(resultSet);
+                    }
                 }
+            } catch (SQLException e) {
+                System.out.println("Error al consultar: " + e);
             }
-        } catch (SQLException e) {
-            System.out.println("Error al consultar: " + e);
         }
         return Optional.ofNullable(user);
     }
@@ -217,7 +224,7 @@ public class UserDB {
                     new Funcionalidad("Crear cuenta bancaria", "CreateUser"),
                     new Funcionalidad("Ver y actualizar perfil", "UpdateInfo"),
                     new Funcionalidad("Actualizar datos de cajeros", "DisplayCajeros"),
-                    new Funcionalidad("Actualizar datos de clientes", ""),
+                    new Funcionalidad("Actualizar datos de clientes", "DisplayClientes"),
                     new Funcionalidad("Actualizar Parametros del sistema", "SystemParam"),
                     new Funcionalidad("Visualizar reportes", "")
                 };

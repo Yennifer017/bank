@@ -1,12 +1,17 @@
 package ipc2.bank.util;
 
+import ipc2.bank.database.TurnoDB;
 import ipc2.bank.database.UserDB;
+import ipc2.bank.exceptions.NoConnectionFoundException;
+import ipc2.bank.models.User;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
+import java.util.List;
 
 /**
  *
@@ -14,7 +19,8 @@ import java.io.IOException;
  */
 public class ServletUtil {
 
-    public void goToValidateSchedule(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response, String urlValid) 
+    public void goToValidateSchedule(HttpServlet servlet, HttpServletRequest request, 
+            HttpServletResponse response, String urlValid) 
             throws ServletException, IOException {
         try {
             UserDB userDB = new UserDB(request.getSession());
@@ -36,5 +42,22 @@ public class ServletUtil {
         RequestDispatcher dispatcher = servlet.getServletContext()
                 .getRequestDispatcher(url);
         dispatcher.forward(request, response);
+    }
+    
+    public void displayUsers(HttpServlet servlet, HttpServletRequest request, HttpServletResponse response,
+            String title, int typeUser) 
+            throws ServletException, IOException{
+        UserDB userDB = new UserDB((Connection)request.getSession().getAttribute("conexion"));
+        List<User> consulta = userDB.getAll(typeUser);
+        request.setAttribute("consultas", consulta);
+        request.setAttribute("titulo", title);
+        this.goToValidateSchedule(servlet, request, response, "/gerenteModule/gestionUsers.jsp");
+    }
+    public void loadFilterTurns(HttpServletRequest request){
+        try {
+            request.setAttribute("turns", new TurnoDB(request.getSession()).getAll());
+        } catch (NoConnectionFoundException ex) {
+            System.out.println(ex);
+        }
     }
 }
