@@ -1,51 +1,80 @@
-
 package ipc2.bank.database;
 
-import ipc2.bank.models.Turno;
+import ipc2.bank.exceptions.NoConnectionFoundException;
+import ipc2.bank.models.Cliente;
+import ipc2.bank.models.Empleado;
+import ipc2.bank.models.User;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalTime;
-import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author yenni
  */
 public class EmpleadoDB {
+
     private Connection connection;
 
     public EmpleadoDB(Connection connection) {
         this.connection = connection;
     }
-    
-    public Optional<Turno> getTurno(int idEmpleado){
-        String query = "SELECT turno.nombre, turno.horaEntrada, turno.horaSalida, turno.id "
-                + "FROM empleado "
-                + "JOIN turno "
-                + "ON empleado.idTurno = turno.id "
-                + "WHERE empleado.codigoUsuario = ?";
-        Turno turno = null;
-        try {
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.setInt(1, idEmpleado);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    turno = new Turno(rs.getInt("id"), 
-                            rs.getString("nombre"), 
-                            rs.getTime("horaEntrada"), 
-                            rs.getTime("horaSalida"));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al consultar: " + e);
+    public EmpleadoDB(HttpSession session) throws NoConnectionFoundException {
+        this.connection = (Connection) session.getAttribute("conexion");
+        if (this.connection == null) {
+            throw new NoConnectionFoundException();
         }
-        return Optional.ofNullable(turno);
     }
-    public boolean validarTurno(Turno turno){
-        LocalTime horaActual = LocalTime.now();
-        return horaActual.isAfter(turno.getEntrada().toLocalTime()) 
-                && horaActual.isBefore(turno.getSalida().toLocalTime());
+
+    public String updateIntoDB(HttpServletRequest request, int typeUser, int idUser) {
+        String error = null;
+        
+        try {
+            connection.setAutoCommit(false);
+            UserDB userDB = new UserDB(connection);
+            User user = new User(request, typeUser); //crear el user con los datos del forms
+            user.setId(idUser);
+            if (user.coregir(userDB.obtener(idUser).get())) {
+                if (user.isValid()) {
+                    userDB.updateIntoDB(user);
+                    Empleado empleado = new Empleado(request, idUser);
+                    if (!empleado.isValid(connection)) {
+                        TurnoDB turnoDB = new TurnoDB(connection);
+                        empleado.setIdTurn(turnoDB.getTurno(idUser).get().getIdType());
+                    }
+                    this.updateIntoDB(empleado);
+                    connection.commit();
+                } else {
+                    error = "Algun campo no contiene informacion valida, no se pudo actualizar";
+                }
+            } else {
+                error = "error inesperado";
+            }
+            connection.rollback();
+            connection.setAutoCommit(true);
+        } catch (Exception ex) {
+            error = "error inesperado, intentalo de nuevo";
+            Logger.getLogger(ClienteDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return error;
     }
+
+    public boolean updateIntoDB(Empleado empleado) {
+        try {
+            String query = "UPDATE empleado SET idTurno = ? WHERE codigoUsuario = ?";
+            PreparedStatement update = connection.prepareStatement(query);
+            update.setInt(1, empleado.getIdTurn());
+            update.setInt(2, empleado.getIdUser());
+            update.executeUpdate();
+            System.out.println("Updated de un empleado exitoso");
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
 }

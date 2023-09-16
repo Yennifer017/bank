@@ -1,7 +1,7 @@
 package ipc2.bank.servlets.gerente;
 
 import ipc2.bank.database.ClienteDB;
-import ipc2.bank.util.utilForServlet;
+import ipc2.bank.util.ServletUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -16,10 +16,10 @@ import java.sql.Connection;
 @jakarta.servlet.annotation.MultipartConfig
 public class CreateUser extends HttpServlet {
 
-    private utilForServlet util;
+    private ServletUtil util;
 
     public CreateUser() {
-        util = new utilForServlet();
+        util = new ServletUtil();
     }
 
     /**

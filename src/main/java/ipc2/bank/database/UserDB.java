@@ -15,7 +15,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 /**
  *
  * @author yenni
@@ -53,7 +52,7 @@ public class UserDB {
         }
         return user.isPresent();
     }
-    
+
     /**
      * Obtiene un usuario opcional a partir de credenciales y una contrasena
      * @param credentials del usuario, el numero de dpi
@@ -70,7 +69,7 @@ public class UserDB {
             ps.setString(2, encryptedPassword);
             try (ResultSet resultSet = ps.executeQuery()) {
                 if (resultSet.next()) {
-                    user = getData(resultSet);
+                    user = new User(resultSet);
                 }
             }
         } catch (SQLException e) {
@@ -78,13 +77,32 @@ public class UserDB {
         }
         return Optional.ofNullable(user);
     }
+    
+    public Optional<User> obtener(int id) {
+        User user = null;
+        String query = "SELECT * FROM usuario WHERE codigo = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, id);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    user = new User(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al consultar: " + e);
+        }
+        return Optional.ofNullable(user);
+    }
+
     /**
-     * Consulta la base de datos para verificar si ya existen ciertas credenciales
-     * 
+     * Consulta la base de datos para verificar si ya existen ciertas
+     * credenciales
+     *
      * @param credentials para verificar coincidencias
      * @return true si existe, false de lo contrario
      */
-    public boolean preExist(String credentials){
+    public boolean preExist(String credentials) {
         String query = "SELECT * FROM usuario WHERE noIdentificacion = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
@@ -100,25 +118,45 @@ public class UserDB {
             return false;
         }
     }
+    public boolean exist(int idUser) {
+        String query = "SELECT * FROM usuario WHERE codigo = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, idUser);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (SQLException e) {
+            System.out.println("Error al consultar: " + e);
+            return false;
+        }
+    }
 
     /**
-     * Obtiene todos los datos de un usuario a partir de un resultado de una consulta mysql
+     * Obtiene todos los datos de un usuario a partir de un resultado de una
+     * consulta mysql
+     *
      * @return User
      * @thorws SQLException si no encuentra las columnas necesarias
      */
-    private User getData(ResultSet rs) throws SQLException {
+    /*private User getData(ResultSet rs) throws SQLException {
         return new User(rs.getInt("codigo"),
                 rs.getInt("tipoUsuario"),
                 rs.getString("nombre"),
                 rs.getString("direccion"),
                 rs.getString("noIdentificacion"),
                 rs.getString("sexo"));
-    }
+    }*/
 
     /**
-     * Obtiene el link de redireccion al dashboard de los perfiles
-     * ademas actualiza sus funciones a partir del usuario asignado a la sesion
-     * si no hay ningun usuario seteado no inicializa nada y muestra el dashboard vacio
+     * Obtiene el link de redireccion al dashboard de los perfiles ademas
+     * actualiza sus funciones a partir del usuario asignado a la sesion si no
+     * hay ningun usuario seteado no inicializa nada y muestra el dashboard
+     * vacio
+     *
      * @param request para obtener la sesion y el usuario asociado a ella
      * @return String url del dashboard
      */
@@ -134,11 +172,12 @@ public class UserDB {
 
     /**
      * Evalua el tipo de usuario y retorna las funcionalidades correspondientes
+     *
      * @throws AssertionError cuando se ingresa un tipo de usuario inexistente
      * @param tipoUsuario el codigo del tipo de usuario
      * @return Funcionalidad[] lista de funcionalidades de cada tipo de usuario
      */
-    private Funcionalidad[] getFuncionalidades(int tipoUsuario) throws AssertionError{
+    private Funcionalidad[] getFuncionalidades(int tipoUsuario) throws AssertionError {
         switch (tipoUsuario) {
             case 1: //cliente
                 Funcionalidad[] funC = {
@@ -157,7 +196,7 @@ public class UserDB {
             case 3: //gerente
                 Funcionalidad[] funG = {
                     new Funcionalidad("Crear cuenta bancaria", "CreateUser"),
-                    new Funcionalidad("Ver y actualizar perfil", ""),
+                    new Funcionalidad("Ver y actualizar perfil", "UpdateInfo"),
                     new Funcionalidad("Actualizar datos de cajeros", ""),
                     new Funcionalidad("Actualizar datos de clientes", ""),
                     new Funcionalidad("Actualizar Parametros del sistema", ""),
@@ -171,19 +210,21 @@ public class UserDB {
 
     /**
      * Valida los horarios de un usuario
-     * @param session de la sesion va obtener el atributo user, que servira para evaluar su tipo
+     *
+     * @param session de la sesion va obtener el atributo user, que servira para
+     * evaluar su tipo
      * @return true si el horario permite acceder, false de lo contrario
-     * @throws ipc2.bank.exceptions.NoAtributeFoundException si el empleasdo no cuenta con un horario, 
-     *   es un error de la base de datos
+     * @throws ipc2.bank.exceptions.NoAtributeFoundException si el empleasdo no
+     * cuenta con un horario, es un error de la base de datos
      */
-    public boolean validateScedule(HttpSession session) 
+    public boolean validateScedule(HttpSession session)
             throws NoAtributeFoundException, NullPointerException {
         User currentUser = (User) session.getAttribute("user");
         if (currentUser.getTipoUsuario() == 2 || currentUser.getTipoUsuario() == 3) {
-            EmpleadoDB empleadoDB = new EmpleadoDB(connection);
-            Optional<Turno> turnoOp = empleadoDB.getTurno(currentUser.getId());
+            TurnoDB turnoDB = new TurnoDB(connection);
+            Optional<Turno> turnoOp = turnoDB.getTurno(currentUser.getId());
             if (turnoOp.isPresent()) {
-                return empleadoDB.validarTurno(turnoOp.get());
+                return turnoDB.validarTurno(turnoOp.get());
             } else {
                 throw new NoAtributeFoundException();
             }
@@ -191,13 +232,13 @@ public class UserDB {
             return true;
         }
     }
-    
+
     /**
-     * @param user  el usuario que se insertara en la base de datos   
+     * @param user el usuario que se insertara en la base de datos
      * @return boolean que indica si se inserto correctamente o no
      */
-    public boolean InsertIntoDB(User user){
-        if(user.isValid() && !preExist(user.getNoIdentificacion())){
+    public boolean insertIntoDB(User user) {
+        if (user.isValid() && !preExist(user.getNoIdentificacion())) {
             String query = "INSERT INTO usuario(nombre, direccion, noIdentificacion, sexo, password, tipoUsuario) "
                     + "VALUES (?, ?, ?, ?, ?, ?);";
             try {
@@ -215,10 +256,34 @@ public class UserDB {
                 System.out.println(e);
                 return false;
             }
-        }else{
+        } else {
             return false;
         }
     }
-    
-    
+
+    public boolean updateIntoDB(User updateUser) { 
+        try {
+            String query = "UPDATE usuario SET nombre = ?, "
+                    + "direccion = ?,"
+                    + "noIdentificacion = ?, "
+                    + "sexo = ?, "
+                    + "password = ? "
+                    + "WHERE codigo = ?;";
+            PreparedStatement update = connection.prepareStatement(query);
+            update.setString(1, updateUser.getName());
+            update.setString(2, updateUser.getAddress());
+            update.setString(3, updateUser.getNoIdentificacion());
+            update.setString(4, updateUser.getSexo());
+            String encryptedPassword = updateUser.getPassword();
+            update.setString(5, encryptedPassword);
+            update.setInt(6, updateUser.getId());
+            update.executeUpdate();
+            System.out.println("Updated de un user exitoso");
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
 }

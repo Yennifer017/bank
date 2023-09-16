@@ -38,9 +38,9 @@ public class ClienteDB {
             
             UserDB userDB = new UserDB(connection);
             User user = new User(request, 1);
-            if(userDB.InsertIntoDB(user)){
+            if(userDB.insertIntoDB(user)){
                 User usuario = userDB.obtener(user.getNoIdentificacion(), user.getPassword()).get();
-                if(InsertIntoDB(new Cliente(request,usuario.getId(), this.connection))){
+                if(insertIntoDB(new Cliente(request,usuario.getId(), this.connection))){
                     connection.commit(); //para guardar cambios
                 }else{
                     error = "La fecha de nacimiento o el pdf no se ha ingresado mal";
@@ -57,7 +57,7 @@ public class ClienteDB {
     }
     
     
-    private boolean InsertIntoDB(Cliente cliente){
+    private boolean insertIntoDB(Cliente cliente){
         if(cliente.isValid() && !preExist(cliente.getCodigoUsuario())){
             String query = "INSERT INTO cliente(codigoUsuario, birth, pdfDPI) VALUES (?,?,?)";
             try {

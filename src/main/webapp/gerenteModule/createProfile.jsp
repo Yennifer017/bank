@@ -13,6 +13,7 @@
         <jsp:include page="/includes/resources.jsp"/>
     </head>
     <body>
+        <jsp:include page="/includes/header.jsp"/>
         <c:if test="${empty(error)}"> <!-- para que no muestre nada si no tiene permisos -->
 
             <!-- Section: Design Block -->
@@ -20,12 +21,9 @@
                 <!-- Background image -->
                 <div class="p-5 bg-image" style="
                      background-image: url('https://mdbootstrap.com/img/new/textures/full/171.jpg');
-                     height: 100px;
+                     height: 150px;
                      "></div>
                 <!-- Background image -->
-
-
-
 
                 <div class="card mx-4 mx-md-5 shadow-5-strong" style="
                      margin-top: -100px;
@@ -112,7 +110,7 @@
                 </div>
             </section>
             <!-- Section: Design Block -->
-        </c:if>>
+        </c:if>
         <jsp:include page="/includes/footer.jsp"/>
     </body>
 </html>
