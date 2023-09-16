@@ -218,7 +218,7 @@ public class UserDB {
                     new Funcionalidad("Ver y actualizar perfil", "UpdateInfo"),
                     new Funcionalidad("Actualizar datos de cajeros", "DisplayCajeros"),
                     new Funcionalidad("Actualizar datos de clientes", ""),
-                    new Funcionalidad("Actualizar Parametros del sistema", ""),
+                    new Funcionalidad("Actualizar Parametros del sistema", "SystemParam"),
                     new Funcionalidad("Visualizar reportes", "")
                 };
                 return funG;

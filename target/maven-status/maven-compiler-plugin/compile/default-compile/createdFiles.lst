@@ -7,11 +7,15 @@ ipc2\bank\util\PdfUtil.class
 ipc2\bank\database\UserDB.class
 ipc2\bank\models\RegistroCambio.class
 ipc2\bank\models\User.class
+ipc2\bank\servlets\gerente\DisplayCajeros.class
+ipc2\bank\servlets\gerente\SystemParam.class
 ipc2\bank\encriptador\Encriptador.class
 ipc2\bank\models\Empleado.class
+ipc2\bank\database\LimiteDB.class
 ipc2\bank\database\EmpleadoDB.class
 ipc2\bank\database\TurnoDB.class
 ipc2\bank\exceptions\NoConnectionFoundException.class
+ipc2\bank\models\Limite.class
 ipc2\bank\servlets\gerente\CreateUser.class
 ipc2\bank\util\Funcionalidad.class
 ipc2\bank\util\ServletUtil.class
