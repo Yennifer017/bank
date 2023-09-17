@@ -56,6 +56,7 @@ public class DisplayClientes extends HttpServlet {
         try {
             request.setAttribute("url", "UpdateCliente"); //el servlet que procesara el update
             request.setAttribute("title", "ACTUALIZACION DE UN CLIENTE");
+            request.setAttribute("cliente", true);
             UserDB userDB = new UserDB(request.getSession());
             User currentUser = userDB.obtener(Integer.parseInt(request.getParameter("idCurrentUser"))).get();
             request.setAttribute("currentUser", currentUser);

@@ -2,7 +2,6 @@
 package ipc2.bank.servlets.gerente;
 
 import ipc2.bank.database.EmpleadoDB;
-import ipc2.bank.database.TurnoDB;
 import ipc2.bank.database.UserDB;
 import ipc2.bank.exceptions.NoConnectionFoundException;
 import ipc2.bank.models.User;

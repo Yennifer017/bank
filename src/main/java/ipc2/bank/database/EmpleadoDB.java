@@ -61,7 +61,9 @@ public class EmpleadoDB {
             connection.rollback();
             connection.setAutoCommit(true);
         } catch (Exception ex) {
-            error = "error inesperado, intentalo de nuevo";
+            error = "error inesperado, probablemente desde la base de datos / "
+                    + "Posibles errores: no se encontro un horario registrado valido del usuario,"
+                    + "es conflictivo";
             Logger.getLogger(ClienteDB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return error;

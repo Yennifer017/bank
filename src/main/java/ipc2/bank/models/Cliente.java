@@ -38,9 +38,10 @@ public class Cliente {
             }
             //obtener fecha
             String fechaIngresada = request.getParameter("birthInput");
-            birth = Date.valueOf(fechaIngresada);
-           
-        } catch (NullPointerException e) {
+            if(!fechaIngresada.isEmpty()){
+                birth = Date.valueOf(fechaIngresada);
+            }
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -51,6 +52,11 @@ public class Cliente {
             return false;
         }
     }
+
+    public boolean containsValidBirth(){
+        return validateBirth(birth.toLocalDate());
+    }
+    
     private boolean validateBirth(LocalDate date){
         LocalDate fechaActual  = LocalDate.now();
         return date.isBefore(fechaActual);

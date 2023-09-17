@@ -28,6 +28,7 @@
                             <p class="mb-5">IMPORTANTE: es necesario volver a especificar la contraseña, si se deja en blanco no 
                             se efectuara la actualizacion, o si se escribe un valor diferente, esta se actualizara con los
                             otros campos</p>
+                            <input name="ID"  type="hidden" class="form-control" value="${currentUser.id}"/> <!-- tener el id del current user-->
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <div class="form-outline">
