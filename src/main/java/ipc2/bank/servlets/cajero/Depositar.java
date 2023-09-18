@@ -1,10 +1,15 @@
 
 package ipc2.bank.servlets.cajero;
 
+import ipc2.bank.database.TransaccionDB;
+import ipc2.bank.models.User;
+import ipc2.bank.models.Transaccion;
+import ipc2.bank.util.ServletUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 /**
  *
@@ -12,7 +17,12 @@ import java.io.IOException;
  */
 @WebServlet(name = "Depositar", urlPatterns = {"/Depositar"})
 public class Depositar extends HttpServlet {
-
+    private ServletUtil util;
+    
+    public Depositar(){
+        this.util = new ServletUtil();
+    }
+            
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -25,7 +35,8 @@ public class Depositar extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        request.setAttribute("title", "Deposito");
+        util.goToValidateSchedule(this, request, response, "/cajeroModule/transacciones.jsp");
     }
 
     /**
@@ -39,6 +50,9 @@ public class Depositar extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("title", "Deposito");
+        util.processTransaction(request, Transaccion.CREDITO);
+        util.redirect(this, request, response, "/cajeroModule/transacciones.jsp");
     }
 
     /**

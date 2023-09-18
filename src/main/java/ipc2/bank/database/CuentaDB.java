@@ -6,6 +6,8 @@ import ipc2.bank.models.Cuenta;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -43,6 +45,24 @@ public class CuentaDB {
         update.setInt(2, idCuenta);
         update.executeUpdate();
         System.out.println("Updated de una cuenta / monto exitoso");
+    }
+
+    public List<Cuenta> getCuentas(int idUser) {
+        String query = "SELECT * FROM cuenta WHERE codigoCliente = ?";
+        try {
+            PreparedStatement select = connection.prepareStatement(query);
+
+            List<Cuenta> cuentasAsociadas = new ArrayList<>();
+            select.setInt(1, idUser);
+            ResultSet rs = select.executeQuery();
+            while (rs.next()) {
+                cuentasAsociadas.add(new Cuenta(rs));
+            }
+            return cuentasAsociadas;
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+        return null;
     }
 
 }

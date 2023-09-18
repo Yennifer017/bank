@@ -2,6 +2,7 @@ package ipc2.bank.database;
 
 import ipc2.bank.models.Cuenta;
 import ipc2.bank.models.Transaccion;
+import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,9 +19,19 @@ public class TransaccionDB {
         this.connection = connection;
     }
     
-    public String insertIntoDB(){
-        
-        return null;
+    public String insertIntoDB(HttpServletRequest request, int idCajero, String typeTrans){
+        String error = null;
+        try {
+            int idCuenta = Integer.parseInt(request.getParameter("codCuentaInput"));
+            float monto = Float.parseFloat(request.getParameter("montoInput"));
+            Transaccion transaccion = new Transaccion(idCuenta, idCajero, typeTrans, monto);
+            error = executeTransaction(transaccion);
+        } catch (NumberFormatException | SQLException e) {
+            System.out.println(e);
+            //error = "Datos ingresados invalidos" || "error inesperado de la base de datos";
+            error = e.toString();
+        }   
+        return error;
     }
     
     public String executeTransaction(Transaccion transaccion) throws SQLException {

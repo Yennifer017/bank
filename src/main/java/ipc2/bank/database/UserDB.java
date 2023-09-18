@@ -215,7 +215,7 @@ public class UserDB {
         switch (tipoUsuario) {
             case 1: //cliente
                 Funcionalidad[] funC = {
-                    new Funcionalidad("Verificar estado de cuenta", ""),
+                    new Funcionalidad("Verificar estado de cuenta", "AcountStatus"),
                     new Funcionalidad("Transferir dinero entre cuentas asociadas", ""),
                     new Funcionalidad("Transferencia a terceros", ""),
                     new Funcionalidad("Visualizar reportes", "")
@@ -224,7 +224,7 @@ public class UserDB {
             case 2: //cajero
                 Funcionalidad[] funCa = {
                     new Funcionalidad("Depositar", "Depositar"),
-                    new Funcionalidad("Retirar", ""),
+                    new Funcionalidad("Retirar", "Retirar"),
                     new Funcionalidad("Visualizar reportes", ""),};
                 return funCa;
             case 3: //gerente
