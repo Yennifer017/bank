@@ -160,6 +160,14 @@ public class UserDB {
             return false;
         }
     }
+    public boolean isType(int idUser, int typeUser){
+        boolean condicion = false;
+        Optional<User> userOp = this.obtener(idUser);
+        if(userOp.isPresent()){
+            return userOp.get().getTipoUsuario() == typeUser;
+        }
+        return condicion;
+    }
 
     /**
      * Obtiene todos los datos de un usuario a partir de un resultado de una
@@ -215,13 +223,14 @@ public class UserDB {
                 return funC;
             case 2: //cajero
                 Funcionalidad[] funCa = {
-                    new Funcionalidad("Depositar", ""),
+                    new Funcionalidad("Depositar", "Depositar"),
                     new Funcionalidad("Retirar", ""),
                     new Funcionalidad("Visualizar reportes", ""),};
                 return funCa;
             case 3: //gerente
                 Funcionalidad[] funG = {
-                    new Funcionalidad("Crear cuenta bancaria", "CreateUser"),
+                    new Funcionalidad("Crear cuenta de cliente", "CreateUser"),
+                    new Funcionalidad("Crear cuenta bancaria", ""),
                     new Funcionalidad("Ver y actualizar perfil", "UpdateInfo"),
                     new Funcionalidad("Actualizar datos de cajeros", "DisplayCajeros"),
                     new Funcionalidad("Actualizar datos de clientes", "DisplayClientes"),
