@@ -6,6 +6,7 @@ ipc2\bank\util\PdfUtil.class
 ipc2\bank\database\UserDB.class
 ipc2\bank\database\CuentaDB.class
 ipc2\bank\servlets\gerente\SystemParam.class
+ipc2\bank\servlets\cajero\ShowDPI.class
 ipc2\bank\database\TransaccionDB.class
 ipc2\bank\database\EmpleadoDB.class
 ipc2\bank\database\TurnoDB.class
@@ -15,6 +16,7 @@ ipc2\bank\util\Funcionalidad.class
 ipc2\bank\models\Cliente.class
 ipc2\bank\database\ClienteDB.class
 ipc2\bank\database\RegistroCambioDB.class
+ipc2\bank\servlets\gerente\CreateAcount.class
 ipc2\bank\servlets\cajero\Retirar.class
 ipc2\bank\servlets\Login.class
 ipc2\bank\conexion\Conexion.class
@@ -29,6 +31,7 @@ ipc2\bank\models\Empleado.class
 ipc2\bank\servlets\gerente\DisplayClientes.class
 ipc2\bank\models\Transaccion.class
 ipc2\bank\database\LimiteDB.class
+ipc2\bank\exceptions\InsertionException.class
 ipc2\bank\models\Limite.class
 ipc2\bank\servlets\gerente\CreateUser.class
 ipc2\bank\util\ServletUtil.class

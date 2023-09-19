@@ -17,12 +17,21 @@
         <c:if test="${empty(error)}"> <!-- para que no muestre nada si no tiene permisos -->
 
             <div class="card-body py-5 px-md-5">
-                
+
+                <!-- verificacion visual del dpi -->
+                <c:if test="${!empty(linkToShowDPI)}">
+                    <form action="${linkToShowDPI}" method="POST">
+                        <input name="idUserInput" type="text" class="form-control"/>
+                        <button type="submit" class="btn btn-primary btn-block mb-4">
+                            Verificar DPI
+                        </button>
+                    </form>
+                </c:if>
+
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-8">
                         <h2 class="fw-bold my-5">Transaccion: ${title}</h2>
                         <form action="${url}" method="POST">
-
                             <!-- 2 column grid layout with text inputs -->
                             <div class="row">
                                 <div class="col-md-6 mb-4">

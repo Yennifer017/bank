@@ -1,5 +1,6 @@
 package ipc2.bank.database;
 
+import ipc2.bank.exceptions.InsertionException;
 import java.sql.Connection;
 import java.util.Optional;
 import ipc2.bank.models.Cuenta;
@@ -8,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import ipc2.bank.models.User;
+import java.sql.Date;
+import java.time.LocalDate;
 
 /**
  *
@@ -38,6 +42,22 @@ public class CuentaDB {
         return Optional.ofNullable(cuenta);
     }
 
+    private Optional<Cuenta> getUltimaCuenta(int idCliente){
+        Cuenta cuenta = null;
+        String query = "SELECT * FROM cuenta WHERE codigoCliente = ? ORDER BY codigo DESC LIMIT 1";
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, idCliente);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    cuenta = new Cuenta(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al consultar: " + e);
+        }
+        return Optional.ofNullable(cuenta);
+    }
     public void updateSaldo(Float nuevoSaldo, int idCuenta) throws SQLException {
         String query = "UPDATE cuenta SET saldo = ? WHERE codigo = ?";
         PreparedStatement update = connection.prepareStatement(query);
@@ -64,5 +84,53 @@ public class CuentaDB {
         }
         return null;
     }
-
+    
+    public int createAcount(String credentials, float saldo) throws InsertionException, SQLException{
+        String error = null;
+        UserDB userDB = new UserDB(connection);
+        Optional<User> user =  userDB.obtener(credentials);
+        connection.setAutoCommit(false);
+        if(user.isPresent() && saldo>=0){
+            boolean insertionOK = insertIntoDB(new Cuenta(
+                    user.get().getId(), 
+                    Date.valueOf(LocalDate.now()), 
+                    saldo));
+            if(insertionOK){
+                Optional<Cuenta> cuenta = this.getUltimaCuenta(user.get().getId());
+                if(cuenta.isPresent()){
+                    connection.commit();
+                    return cuenta.get().getId();
+                }else{
+                    error = "Error inesperado, no se ha podido obtener el codigo de cuenta creada";
+                }
+            }else{
+                error = "Error inesperado en la base de datos";
+            }
+        }else if(user.isEmpty()){
+            error = "Credenciales de usuario no encontradas en la base de datos";
+        }else if(saldo<0){
+            error = "El saldo no puede ser negativo";
+        }
+        connection.rollback();
+        connection.setAutoCommit(true);
+        throw new InsertionException(error);
+    }
+    
+    public boolean insertIntoDB(Cuenta cuenta){
+        String query = "INSERT INTO cuenta(codigoCliente, fechaCreacion, saldo) VALUES(?, ?, ?)";
+        try {
+            PreparedStatement insert = connection.prepareStatement(query);
+            insert.setInt(1, cuenta.getIdCliente());
+            insert.setDate(2, cuenta.getFechaCreacion());
+            insert.setFloat(3, cuenta.getSaldo());
+            insert.executeUpdate();
+            System.out.println("cuenta creada exitosamente");
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+    
+    
 }

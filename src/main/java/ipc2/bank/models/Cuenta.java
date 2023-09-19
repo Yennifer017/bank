@@ -22,4 +22,11 @@ public class Cuenta {
         fechaCreacion = rs.getDate("fechaCreacion");
         saldo = rs.getFloat("saldo");
     }
+
+    public Cuenta(int idCliente, Date fechaCreacion, float saldo) {
+        this.idCliente = idCliente;
+        this.fechaCreacion = fechaCreacion;
+        this.saldo = saldo;
+    }
+    
 }

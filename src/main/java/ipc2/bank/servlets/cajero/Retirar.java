@@ -31,10 +31,14 @@ public class Retirar extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("title", "Retiro");
+        setAtributes(request);
         util.goToValidateSchedule(this, request, response, "/cajeroModule/transacciones.jsp");
     }
 
+    private void setAtributes(HttpServletRequest request){
+        request.setAttribute("title", "Retiro");
+        request.setAttribute("linkToShowDPI", "ShowDPI");
+    }
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -46,7 +50,7 @@ public class Retirar extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("title", "Retiro");
+        setAtributes(request);
         util.processTransaction(request, Transaccion.DEBITO);
         util.redirect(this, request, response, "/cajeroModule/transacciones.jsp");
     }
@@ -59,6 +63,6 @@ public class Retirar extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

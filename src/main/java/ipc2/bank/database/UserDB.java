@@ -121,6 +121,22 @@ public class UserDB {
         return Optional.ofNullable(user);
     }
 
+    public Optional<User> obtener(String credentials){
+        String query = "SELECT * FROM usuario WHERE noIdentificacion = ?";
+        User user = null;
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, credentials);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                if (resultSet.next()) {
+                    user = new User(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al consultar: " + e);
+        }
+        return Optional.ofNullable(user);
+    }
     /**
      * Consulta la base de datos para verificar si ya existen ciertas
      * credenciales
@@ -128,7 +144,7 @@ public class UserDB {
      * @param credentials para verificar coincidencias
      * @return true si existe, false de lo contrario
      */
-    public boolean preExist(String credentials) {
+    public boolean exist(String credentials) {
         String query = "SELECT * FROM usuario WHERE noIdentificacion = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(query);
@@ -230,7 +246,7 @@ public class UserDB {
             case 3: //gerente
                 Funcionalidad[] funG = {
                     new Funcionalidad("Crear cuenta de cliente", "CreateUser"),
-                    new Funcionalidad("Crear cuenta bancaria", ""),
+                    new Funcionalidad("Crear cuenta bancaria", "CreateAcount"),
                     new Funcionalidad("Ver y actualizar perfil", "UpdateInfo"),
                     new Funcionalidad("Actualizar datos de cajeros", "DisplayCajeros"),
                     new Funcionalidad("Actualizar datos de clientes", "DisplayClientes"),
@@ -273,7 +289,7 @@ public class UserDB {
      * @return boolean que indica si se inserto correctamente o no
      */
     public boolean insertIntoDB(User user) {
-        if (user.isValid() && !preExist(user.getNoIdentificacion())) {
+        if (user.isValid() && !exist(user.getNoIdentificacion())) {
             String query = "INSERT INTO usuario(nombre, direccion, noIdentificacion, sexo, password, tipoUsuario) "
                     + "VALUES (?, ?, ?, ?, ?, ?);";
             try {
