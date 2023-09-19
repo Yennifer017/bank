@@ -70,18 +70,29 @@ public class ServletUtil {
         HttpSession session = request.getSession();
         User currentCajero = (User) session.getAttribute("user");
         TransaccionDB transDB = new TransaccionDB((Connection) session.getAttribute("conexion"));
-        String error = transDB.insertIntoDB(request, currentCajero.getId(),typeTrans);
+        String error = transDB.insertIntoDB(request, currentCajero.getId(), typeTrans);
         if (error != null) {
             request.setAttribute("transError", error);
         } else {
             request.setAttribute("exito", "Transaccion exitosa");
         }
     }
-    public Connection getConnection(HttpServletRequest request){
+
+    public Connection getConnection(HttpServletRequest request) {
         return (Connection) request.getSession().getAttribute("conexion");
     }
-    public User getCurrentUser(HttpServletRequest request){
+
+    public User getCurrentUser(HttpServletRequest request) {
         User currentUser = (User) request.getSession().getAttribute("user");
         return currentUser;
+    }
+
+    public void loadTransaction(HttpServletRequest request) {
+        String error = new TransaccionDB(this.getConnection(request)).realizarTransferencia(request);
+        if (error == null) {
+            request.setAttribute("exito", "Transferencia exitosa");
+        } else {
+            request.setAttribute("transError", error);
+        }
     }
 }

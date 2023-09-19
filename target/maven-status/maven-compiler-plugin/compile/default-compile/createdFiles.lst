@@ -22,6 +22,7 @@ ipc2\bank\servlets\Login.class
 ipc2\bank\conexion\Conexion.class
 ipc2\bank\servlets\gerente\UpdateCajero.class
 ipc2\bank\servlets\cajero\Depositar.class
+ipc2\bank\servlets\usuarios\Tranferir.class
 ipc2\bank\models\RegistroCambio.class
 ipc2\bank\models\User.class
 ipc2\bank\servlets\gerente\DisplayCajeros.class

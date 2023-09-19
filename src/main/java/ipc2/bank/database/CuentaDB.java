@@ -68,7 +68,10 @@ public class CuentaDB {
     }
 
     public List<Cuenta> getCuentas(int idUser) {
-        String query = "SELECT * FROM cuenta WHERE codigoCliente = ?";
+        String query = "SELECT cuenta.codigo, cuenta.codigoCliente, cuenta.fechaCreacion, cuenta.saldo, usuario.nombre "
+                + "FROM cuenta JOIN usuario "
+                + "ON cuenta.codigoCliente = usuario.codigo "
+                + "WHERE cuenta.codigoCliente = ?";
         try {
             PreparedStatement select = connection.prepareStatement(query);
 
@@ -76,7 +79,29 @@ public class CuentaDB {
             select.setInt(1, idUser);
             ResultSet rs = select.executeQuery();
             while (rs.next()) {
-                cuentasAsociadas.add(new Cuenta(rs));
+                cuentasAsociadas.add(new Cuenta(rs, rs.getString("nombre")));
+            }
+            return cuentasAsociadas;
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+        return null;
+    }
+    public List<Cuenta> getCuentasAsociadas(int idUser){
+        String query = "SELECT cuentaAsociada.codCliente, cuentaAsociada.codCuenta, usuario.nombre AS propietarioCuenta "
+                + "FROM cuentaAsociada "
+                + "JOIN cuenta ON cuentaAsociada.codCuenta = cuenta.codigo "
+                + "JOIN usuario ON cuenta.codigoCliente = usuario.codigo "
+                + "WHERE cuentaAsociada.codCliente = ?;";
+        try {
+            PreparedStatement select = connection.prepareStatement(query);
+
+            List<Cuenta> cuentasAsociadas = new ArrayList<>();
+            select.setInt(1, idUser);
+            ResultSet rs = select.executeQuery();
+            while (rs.next()) {
+                cuentasAsociadas.add(new Cuenta(rs.getInt("codCuenta"),
+                        rs.getString(3)));
             }
             return cuentasAsociadas;
         } catch (SQLException ex) {
@@ -116,7 +141,7 @@ public class CuentaDB {
         throw new InsertionException(error);
     }
     
-    public boolean insertIntoDB(Cuenta cuenta){
+    private boolean insertIntoDB(Cuenta cuenta){
         String query = "INSERT INTO cuenta(codigoCliente, fechaCreacion, saldo) VALUES(?, ?, ?)";
         try {
             PreparedStatement insert = connection.prepareStatement(query);

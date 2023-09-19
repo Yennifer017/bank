@@ -186,22 +186,6 @@ public class UserDB {
     }
 
     /**
-     * Obtiene todos los datos de un usuario a partir de un resultado de una
-     * consulta mysql
-     *
-     * @return User
-     * @thorws SQLException si no encuentra las columnas necesarias
-     */
-    /*private User getData(ResultSet rs) throws SQLException {
-        return new User(rs.getInt("codigo"),
-                rs.getInt("tipoUsuario"),
-                rs.getString("nombre"),
-                rs.getString("direccion"),
-                rs.getString("noIdentificacion"),
-                rs.getString("sexo"));
-    }*/
-
-    /**
      * Obtiene el link de redireccion al dashboard de los perfiles ademas
      * actualiza sus funciones a partir del usuario asignado a la sesion si no
      * hay ningun usuario seteado no inicializa nada y muestra el dashboard
@@ -232,9 +216,11 @@ public class UserDB {
             case 1: //cliente
                 Funcionalidad[] funC = {
                     new Funcionalidad("Verificar estado de cuenta", "AcountStatus"),
-                    new Funcionalidad("Transferir dinero entre cuentas asociadas", ""),
-                    new Funcionalidad("Transferencia a terceros", ""),
-                    new Funcionalidad("Visualizar reportes", "")
+                    new Funcionalidad("Transferir dinero entre cuentas asociadas", "Transferir"),
+                    new Funcionalidad("Transferencia a terceros", "TransferenciaTerceros"),
+                    new Funcionalidad("Crear solicitud de asociacion", ""),
+                    new Funcionalidad("Ver solicitudes de asociacion", ""),
+                    new Funcionalidad("Visualizar reportes", "" )
                 };
                 return funC;
             case 2: //cajero
